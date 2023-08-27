@@ -1,3 +1,7 @@
+import axios from 'axios';
+axios.defaults.headers.common['x-api-key'] =
+  'live_SVj1aIeXMYYbjko4jsELVaTWh5G7QRZpDR6dEKTmG2xnihIaIjOmFSolCblWAzhx';
+
 function fetchBreeds() {
   const BASE_URL = 'https://api.thecatapi.com/v1/breeds';
 

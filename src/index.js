@@ -11,12 +11,11 @@ axios.defaults.headers.common['x-api-key'] =
 
 elements.searchSelect.addEventListener('change', handlerSearch);
 
-function handlerSearch(evt) {
-  fetchBreeds()
-    .then(data => (elements.container.innerHTML = createMarkup(data)))
-    .catch(err => console.log(err))
-    .finally(() => evt.target.reset());
-}
+fetchBreeds()
+  .then(elements => console.log(elements))
+  .then(data => (elements.container.innerHTML = createMarkup(data)))
+  .catch(err => console.log(err))
+  .finally(() => evt.target.reset());
 
 function createMarkup() {
   const { url } = arr[0];
