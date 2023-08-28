@@ -1,4 +1,6 @@
 import axios from 'axios';
+import SlimSelect from 'slim-select';
+import Notiflix, { Notify } from 'notiflix';
 axios.defaults.headers.common['x-api-key'] =
   'live_SVj1aIeXMYYbjko4jsELVaTWh5G7QRZpDR6dEKTmG2xnihIaIjOmFSolCblWAzhx';
 
@@ -12,11 +14,24 @@ const elements = {
 };
 
 // elements.searchSelect.addEventListener('change', handlerSearch);
+function renderBreedSelect(json) {
+  const markup = json
+    .map(el => `<option value='${el.id}'>${el.name}</option>`)
+    .join('');
+  elements.searchSelect.insertAdjacentHTML('beforeend', markup);
+  new SlimSelect({
+    select: '#selectElement',
+  });
+  elements.searchSelect.value = null; // Очищення вибраного значення
+}
 
-fetchBreeds(evt)
+fetchBreeds()
   .then(elements => console.log(elements))
-  .then(data => renderCatCard(json))
-  .catch(err => console.log(err))
+  .then(renderBreedSelect)
+  .catch(err => {
+    console.log(err);
+    Notify.failure('Qui timide rogat docet negare');
+  })
   .finally(() => evt.target.reset());
 
 function renderCatCard(json) {
@@ -40,5 +55,8 @@ function renderCatCard(json) {
 
 fetchCatByBreed(breedId)
   .then(breed => renderCatCard(json))
-  .catch(err => console.log(err))
+  .catch(err => {
+    console.log(err);
+    Notify.failure('Qui timide rogat docet negare');
+  })
   .finally(() => evt.target.reset());
