@@ -13,9 +13,9 @@ const elements = {
 
 // elements.searchSelect.addEventListener('change', handlerSearch);
 
-fetchBreeds()
+fetchBreeds(evt)
   .then(elements => console.log(elements))
-  .then(data => (elements.container.innerHTML = createMarkup(data)))
+  .then(data => renderCatCard(json))
   .catch(err => console.log(err))
   .finally(() => evt.target.reset());
 
