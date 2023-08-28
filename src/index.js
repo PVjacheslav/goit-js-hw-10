@@ -30,9 +30,14 @@ fetchBreeds()
   .then(renderBreedSelect)
   .catch(err => {
     console.log(err);
-    Notify.failure('Qui timide rogat docet negare');
+    Notify.failure('Oops! Something went wrong!');
   })
-  .finally(() => evt.target.reset());
+  .finally(() => {
+    evt.target.reset();
+    setTimeout(() => {
+      Notify.failure = '';
+    }, 2000);
+  });
 
 function renderCatCard(json) {
   const breedInfo = json[0].breeds[0];
@@ -57,6 +62,11 @@ fetchCatByBreed(breedId)
   .then(breed => renderCatCard(json))
   .catch(err => {
     console.log(err);
-    Notify.failure('Qui timide rogat docet negare');
+    Notify.failure('Oops! Something went wrong!');
   })
-  .finally(() => evt.target.reset());
+  .finally(() => {
+    evt.target.reset();
+    setTimeout(() => {
+      Notify.failure = '';
+    }, 2000);
+  });
