@@ -1,15 +1,17 @@
-const elements = {
-  searchSelect: document.querySelector('.breed-select'),
-  container: document.querySelector('.cat-info'),
-};
-
 import axios from 'axios';
-import { fetchBreeds, fetchCatByBreed } from './cat-api';
-
 axios.defaults.headers.common['x-api-key'] =
   'live_SVj1aIeXMYYbjko4jsELVaTWh5G7QRZpDR6dEKTmG2xnihIaIjOmFSolCblWAzhx';
 
-elements.searchSelect.addEventListener('change', handlerSearch);
+import { fetchBreeds, fetchCatByBreed } from './cat-api';
+
+const elements = {
+  searchSelect: document.querySelector('.breed-select'),
+  loader: document.querySelector('.loader'),
+  error: document.querySelector('.error'),
+  container: document.querySelector('.cat-info'),
+};
+
+// elements.searchSelect.addEventListener('change', handlerSearch);
 
 fetchBreeds()
   .then(elements => console.log(elements))
@@ -17,22 +19,26 @@ fetchBreeds()
   .catch(err => console.log(err))
   .finally(() => evt.target.reset());
 
-function createMarkup() {
-  const { url } = arr[0];
-  const { name, description, temperament } = arr[0].breeds[0];
-  return;
+function renderCatCard(json) {
+  const breedInfo = json[0].breeds[0];
+  const img = {
+    url: json[0].url,
+    alt: breedInfo.name,
+  };
+  const markup = `
+    <h2 class="header">${breedInfo.name}</h2>
+    <div class="card">
+      <img src="${img.url}" alt="Cat breed ${img.alt}" class="image">
+      <div class="description">
+        <p class="text">${breedInfo.description}</p>
+        <p class="text"><b>Temperament:</b> ${breedInfo.temperament}</p>
+      </div>
+    </div>
+  `;
+  elements.container.innerHTML = markup;
 }
 
-// function createMarkup(arr) {
-//   return arr
-//     .map(
-//       ({ reference_image_id, name, description, temperament }) =>
-//         ` <li>
-//         <img src="${reference_image_id}.jpg" alt="${name}">
-//         <h2>${name}</h2>
-//         <p>${description}</p>
-//         <p>${temperament}</p>
-//       </li>`
-//     )
-//     .join('');
-// }
+fetchCatByBreed(breedId)
+  .then(breed => renderCatCard(json))
+  .catch(err => console.log(err))
+  .finally(() => evt.target.reset());
