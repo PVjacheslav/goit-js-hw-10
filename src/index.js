@@ -1,3 +1,6 @@
+import SlimSelect from 'slim-select';
+import Notiflix, { Notify } from 'notiflix';
+
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
 
 const elements = {
@@ -9,19 +12,15 @@ const elements = {
 
 function renderBreedSelect(breeds) {
   const markup = breeds
-    .map(
-      breed =>
-        `<option value='${breed.reference_image_id}'>${breed.name}</option>`
-    )
+    .map(breed => `<option value='${breed.id}'>${breed.name}</option>`)
     .join('');
-  elements.searchSelect.insertAdjacentHTML('beforeend', markup);
+  elements.searchSelect.innerHTML = markup;
   elements.searchSelect.value = null; // Очищення вибраного значення
 }
 
-fetchBreeds().then(renderBreedSelect);
 function renderCatCard(info) {
   let breed = info.breeds[0];
-  const markup = `<img class="image" src="${info.url}" alt="${breed.name}" height="${info.height}" width="${info.width}">
+  const markup = `<img class="image" src="${info.url}" alt="${breed.name}"  width="400">
   <div class="content">
   <h2 class="title">${breed.name}</h2>
   <p class="description">${breed.description}</p>
@@ -30,11 +29,27 @@ function renderCatCard(info) {
   </div>`;
   elements.container.innerHTML = markup;
 }
+
 elements.searchSelect.addEventListener('change', () => {
-  fetchCatByBreed(elements.searchSelect.value)
-    .then(date => console.log(date))
-    .then(result => {
-      renderCatCard(result);
+  const selectedBreedId = elements.searchSelect.value;
+  elements.loader.style.display = 'block';
+  elements.error.style.display = 'none';
+  fetchCatByBreed(selectedBreedId)
+    .then(data => {
+      renderCatCard(data[0]);
     })
-    .catch(error => console.log(error));
+    .catch(error => {
+      console.log(error);
+      elements.error.style.display = 'block';
+    })
+    .finally(() => {
+      elements.loader.style.display = 'none';
+    });
 });
+
+fetchBreeds()
+  .then(renderBreedSelect)
+  .catch(error => {
+    console.log(error);
+    elements.error.style.display = 'block';
+  });
