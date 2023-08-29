@@ -13,10 +13,14 @@ const elements = {
   container: document.querySelector('.cat-info'),
 };
 
-// elements.searchSelect.addEventListener('change', handlerSearch);
-function renderBreedSelect(json) {
-  const markup = json
-    .map(el => `<option value='${el.id}'>${el.name}</option>`)
+elements.searchSelect.addEventListener('change', onChangeSelect);
+
+function renderBreedSelect(breeds) {
+  const markup = breeds
+    .map(
+      breed =>
+        `<option value='${breed.reference_image_id}'>${breed.name}</option>`
+    )
     .join('');
   elements.searchSelect.insertAdjacentHTML('beforeend', markup);
   new SlimSelect({
@@ -25,19 +29,19 @@ function renderBreedSelect(json) {
   elements.searchSelect.value = null; // Очищення вибраного значення
 }
 
-fetchBreeds()
-  .then(elements => console.log(elements))
-  .then(renderBreedSelect)
-  .catch(err => {
-    console.log(err);
-    Notify.failure('Oops! Something went wrong!');
-  })
-  .finally(() => {
-    evt.target.reset();
-    setTimeout(() => {
-      Notify.failure = '';
-    }, 2000);
-  });
+function fetchBreedsRender() {
+  elements.loader.start;
+  fetchBreeds()
+    .then(elements => console.log(elements))
+    .then(breeds => renderBreedSelect(breeds))
+    .catch(err => {
+      console.log(err);
+      Notify.failure('Oops! Something went wrong!');
+    })
+    .finally(() => {
+      evt.target.reset(), loader.stop();
+    });
+}
 
 function renderCatCard(json) {
   const breedInfo = json[0].breeds[0];
@@ -58,15 +62,16 @@ function renderCatCard(json) {
   elements.container.innerHTML = markup;
 }
 
-fetchCatByBreed(breedId)
-  .then(breed => renderCatCard(json))
-  .catch(err => {
-    console.log(err);
-    Notify.failure('Oops! Something went wrong!');
-  })
-  .finally(() => {
-    evt.target.reset();
-    setTimeout(() => {
-      Notify.failure = '';
-    }, 2000);
-  });
+function onChangeSelect(e) {
+  elements.loader.start();
+  const breedId = e.target.value;
+  fetchCatByBreed(breedId)
+    .then(breed => renderCatCard(json))
+    .catch(err => {
+      console.log(err);
+      Notify.failure('Oops! Something went wrong!');
+    })
+    .finally(() => {
+      evt.target.reset(), loader.stop();
+    });
+}
