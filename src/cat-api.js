@@ -1,23 +1,27 @@
 import axios from 'axios';
-axios.defaults.headers.common['x-api-key'] =
-  'live_SVj1aIeXMYYbjko4jsELVaTWh5G7QRZpDR6dEKTmG2xnihIaIjOmFSolCblWAzhx';
-
-function fetchBreeds() {
-  const BASE_URL = 'https://api.thecatapi.com/v1/breeds';
-
+const apiKey =
+  'live_sW0PYRsVvFmIP6p9uFgJzQTR6aDBktZBD4fKfgnGbCKgtHdhwf7guufZawFBfnm7';
+axios.defaults.headers.common['x-api-key'] = apiKey;
+export const fetchBreeds = () => {
+  return axios.get('https://api.thecatapi.com/v1/breeds').then(response => {
+    if (!response.data) {
+      new Error(response.status);
+    } else {
+      return response.data;
+    }
+  });
+};
+export const fetchCatByBreed = id => {
+  let params = new URLSearchParams({
+    breed_ids: id,
+  });
   return axios
-    .get(BASE_URL)
-    .then(response => response.data)
-    .catch(err => error(err));
-}
-
-function fetchCatByBreed(breedId) {
-  const BASE_URL = 'https://api.thecatapi.com/v1/images/search';
-
-  return axios
-    .get(BASE_URL)
-    .then(response => response.data)
-    .catch(err => error(err));
-}
-
-export { fetchBreeds, fetchCatByBreed };
+    .get(`https://api.thecatapi.com/v1/images/search?${params}`)
+    .then(response => {
+      if (!response.data) {
+        new Error(response.status);
+      } else {
+        return response.data[0];
+      }
+    });
+};
