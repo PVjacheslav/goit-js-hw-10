@@ -66,7 +66,7 @@ function onChangeSelect(e) {
   elements.loader.start();
   const breedId = e.target.value;
   fetchCatByBreed(breedId)
-    .then(breed => renderCatCard(json))
+    .then(breed => renderCatCard(breed))
     .catch(err => {
       console.log(err);
       Notify.failure('Oops! Something went wrong!');
