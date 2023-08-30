@@ -36,7 +36,13 @@ elements.searchSelect.addEventListener('change', () => {
   elements.error.style.display = 'none';
   fetchCatByBreed(selectedBreedId)
     .then(data => {
-      renderCatCard(data[0]);
+      if (data.length > 0) {
+        renderCatCard(data[0]);
+        elements.container.style.display = 'block';
+      } else {
+        elements.container.style.display = 'none';
+        Notiflix.Notify.failure('Breed not found.');
+      }
     })
     .catch(error => {
       console.log(error);
